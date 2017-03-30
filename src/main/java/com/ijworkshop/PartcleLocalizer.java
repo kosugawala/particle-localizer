@@ -9,13 +9,31 @@
 package com.ijworkshop;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.measure.CurveFitter;
 import ij.plugin.PlugIn;
+import ij.process.ImageProcessor;
 
 public class PartcleLocalizer implements PlugIn {
 
 	@Override
-	public void run(String arg0) {
-		IJ.log("Hello world2");
+	public void run(String arg) {
+		ImagePlus imp = IJ.getImage();
+		ImageProcessor ip = imp.getProcessor();
+		double[] xData = new double[11];
+		double[] yData = new double[11];
+		int count = 0;
+		for (int i = 123; i <= 133; i++) {
+			xData[count] = i;
+			for (int j = 123; j <= 133; j++) {
+				int value = ip.get(i, j);
+				yData[count] += value;
+			}
+			count++;
+		}
+		CurveFitter fitter = new CurveFitter(xData, yData);
+		fitter.doFit(CurveFitter.GAUSSIAN);
+		IJ.log("mean: " + fitter.getParams()[2]);
 	}
 	
 }
